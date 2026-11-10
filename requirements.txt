@@ -1,0 +1,5 @@
+sounddevice==0.5.5
+faster-whisper==1.2.1
+sentencepiece==0.2.3
+piper-tts==1.8.0
+sherpa-onnx==2.0.1

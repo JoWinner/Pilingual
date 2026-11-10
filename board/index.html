@@ -1,0 +1,157 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>πlingual Control Board</title>
+  <link rel="stylesheet" href="/board.css">
+  <script src="/board.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <a class="brand" href="#board"><span aria-hidden="true">π</span> πlingual</a>
+      <nav aria-label="Board sections">
+        <a class="current" href="#board">Control board</a>
+        <a href="#activity">Activity log</a>
+        <a href="#report">Report</a>
+      </nav>
+      <button id="quit" class="quiet">Close board</button>
+    </header>
+
+    <div class="intro" id="board">
+      <div>
+        <h1>Control board</h1>
+        <p>Local dubbing and transcription</p>
+      </div>
+      <label class="history" for="history">
+        Session history
+        <select id="history"><option value="">Latest session</option></select>
+      </label>
+    </div>
+
+    <p id="notice" role="status" class="notice" hidden></p>
+
+    <main class="board">
+      <section class="tile session" aria-labelledby="session-title">
+        <div class="tile-head">
+          <h2 id="session-title">Session</h2>
+          <span class="status" id="status" role="status">Connecting</span>
+        </div>
+        <div class="session-center">
+          <div>
+            <span class="small">Elapsed time</span>
+            <p id="elapsed" class="clock">00:00</p>
+          </div>
+          <img class="audio-art" src="/earbuds.png" alt="" width="158" height="158">
+        </div>
+        <div class="signal">
+          <svg id="meter" viewBox="0 0 300 54" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="signal-caption"><span id="mic-status">Mic idle</span><span>AirPods input</span></div>
+        </div>
+        <p class="session-caption" id="session-caption">Start a session when you’re ready.</p>
+        <div class="actions">
+          <button id="start" class="primary" disabled>Start session</button>
+          <button id="stop" class="primary" disabled hidden>Stop session</button>
+          <button id="check" class="secondary" disabled>Check audio</button>
+        </div>
+      </section>
+
+      <section class="tile transcript" aria-labelledby="transcript-title">
+        <div class="tile-head">
+          <h2 id="transcript-title">Transcript</h2>
+          <span id="transcript-tag" class="tag">Latest session</span>
+        </div>
+        <div id="transcript-list" class="feed" tabindex="0" role="region" aria-label="Transcript lines"></div>
+        <div class="tile-foot"><span>Text saved on this PC</span><button id="jump-latest" class="quiet" hidden>Latest phrase ↓</button></div>
+      </section>
+
+      <section class="tile routes" aria-labelledby="routes-title">
+        <div class="tile-head">
+          <h2 id="routes-title">Audio routes</h2>
+          <span id="routes-status" class="tag">Unchecked</span>
+        </div>
+        <ul id="routes-list" class="device-list">
+          <li><span class="device-icon" aria-hidden="true">↓</span><div><strong>AirPods microphone</strong><span>Local speech input</span></div></li>
+          <li data-dub><span class="device-icon" aria-hidden="true">↗</span><div><strong>VB-CABLE</strong><span>Dub to WhatsApp</span></div></li>
+          <li data-dub><span class="device-icon" aria-hidden="true">↙</span><div><strong>Hi-Fi Cable</strong><span>Audio from WhatsApp</span></div></li>
+          <li data-dub><span class="device-icon" aria-hidden="true">↑</span><div><strong>AirPods playback</strong><span>Dub to headphones</span></div></li>
+        </ul>
+        <details id="route-help" class="setup">
+          <summary>WhatsApp device settings</summary>
+          <dl>
+            <dt>Microphone</dt><dd>CABLE Output (VB-Audio Virtual Cable)</dd>
+            <dt>Speaker</dt><dd>Hi-Fi Cable Input (VB-Audio Hi-Fi Cable)</dd>
+          </dl>
+        </details>
+      </section>
+
+      <section class="tile settings" aria-labelledby="settings-title">
+        <div class="tile-head"><h2 id="settings-title">Session settings</h2></div>
+        <form id="settings">
+          <fieldset id="settings-fields" disabled>
+            <legend class="visually-hidden">Next session configuration</legend>
+            <label>Mode
+              <select name="mode">
+                <option value="dub">Two-way dubbing</option>
+                <option value="transcribe">Transcribe microphone</option>
+              </select>
+            </label>
+            <label><span id="language-label">Local → caller language</span>
+              <select name="language" id="language">
+                <option value="en">English → Mandarin</option>
+                <option value="zh">Mandarin → English</option>
+              </select>
+            </label>
+            <label>Recognition model
+              <select name="model">
+                <option value="base">Whisper Base</option>
+                <option value="small">Whisper Small</option>
+              </select>
+            </label>
+            <details>
+              <summary>Advanced audio settings</summary>
+              <div class="numeric-fields">
+                <label>Pause (s)<input type="number" name="pause" min="0.3" max="3" step="0.1" value="0.9" required></label>
+                <label>Phrase limit (s)<input type="number" name="seconds" min="2" max="25" step="1" value="20" required></label>
+              </div>
+              <label class="checkbox"><input type="checkbox" name="denoise"> Reduce microphone noise</label>
+            </details>
+          </fieldset>
+        </form>
+        <p id="settings-note" class="small setting-note">Changes apply to the next session.</p>
+      </section>
+
+      <section class="tile activity" id="activity" aria-labelledby="activity-title">
+        <div class="tile-head">
+          <h2 id="activity-title">Activity log</h2>
+          <label class="visually-hidden" for="filter">Filter activity</label>
+          <select id="filter" class="filter"><option value="">All events</option><option value="audio">Audio and phrases</option><option value="warnings">Warnings and errors</option></select>
+        </div>
+        <div id="activity-list" class="event-list" aria-label="Activity events"></div>
+        <div id="event-detail" class="event-detail" hidden></div>
+        <div class="tile-foot">
+          <span>Stored locally</span>
+          <button id="full-log" class="quiet" hidden>Show full session</button>
+        </div>
+      </section>
+
+      <section class="tile report" id="report" aria-labelledby="report-title">
+        <div class="tile-head"><h2 id="report-title">Session report</h2></div>
+        <dl class="stats">
+          <div><dt>Recognized phrases</dt><dd id="phrase-count">—</dd></div>
+          <div><dt>Median dub delay</dt><dd id="delay">—</dd></div>
+        </dl>
+        <p id="report-note" class="small">Start a session to see its report.</p>
+        <a id="export" class="secondary export" hidden>Export report <span aria-hidden="true">↓</span></a>
+      </section>
+    </main>
+
+    <footer><strong>πlingual</strong><span>Local processing and storage</span></footer>
+  </div>
+</body>
+</html>
+
+
